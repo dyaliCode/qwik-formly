@@ -34,9 +34,16 @@ export const Formly = component$<FormProps>((props) => {
 
   const values = useStore<any>({});
 
-  useVisibleTask$(async () => {
+  const updateFields = $(async (field_name?: string, field_value?: any): Promise<void> => {
+    console.log(field_name, field_value);
     const _fields = await Promise.all(
       current_form.fields.map(async (field: Field) => {
+        if (field_name != '' && field_value != null ) {
+          if (field.name === field_name) {
+            field.value = field_value;
+          }
+        }
+
         field = await preprocess_and_validate_field(
           current_form,
           field,
@@ -55,39 +62,22 @@ export const Formly = component$<FormProps>((props) => {
 			}
 		});
 
+    // Update fields, values and status form.
     current_form.fields = _fields;
     current_form.values = values;
     current_form.valid = dirty ? false : true
+
+  });
+
+  useVisibleTask$(async () => {
+    await updateFields();
   });
 
   const onChangeValues = $(async (data: any) => {
     const field_name = Object.keys(data)[0];
     const field_value = data[field_name];
-    const _fields = await Promise.all(
-      current_form.fields.map(async (field: Field) => {
-        if (field.name === field_name) {
-          field.value = field_value;
-          field = await preprocess_and_validate_field(
-            current_form,
-            field,
-            current_form.values
-          );
-          values[`${field.name}`] = field.value ?? null;
-        }
-        return field;
-      })
-    );
 
-    // Find dirty in the current form.
-		const dirty = _fields.find((field: Field) => {
-			if (field.validation) {
-				return field.validation.dirty === true;
-			}
-		});
-
-    current_form.fields = _fields;
-    current_form.values = values;
-    current_form.valid = dirty ? false : true
+    await updateFields(field_name, field_value);
 
     if (props.realtime && props.onUpdate) {
       props.onUpdate({
@@ -97,6 +87,8 @@ export const Formly = component$<FormProps>((props) => {
     }
   });
 
+
+  // Submit form handler.
   const onSubmitHandler = $(() => {
     if (props.onSubmit) {
       props.onSubmit({
@@ -126,7 +118,7 @@ export const Formly = component$<FormProps>((props) => {
         <button type="submit">{props.btnSubmit?.text ?? 'Submit'}</button>
         <button type="reset">{props.btnReset?.text ?? 'Reset'}</button>
       </form>
-      <pre>{JSON.stringify(current_form, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(current_form, null, 2)}</pre> */}
     </>
   );
 });
