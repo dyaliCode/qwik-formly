@@ -1,8 +1,9 @@
-import { $, component$, useSignal, useStore } from '@builder.io/qwik';
+import { $, component$, useSignal } from '@builder.io/qwik';
 import { Formly } from './components/Formly';
 import type { Field } from './types';
 
 // export default () => {
+
 export default component$(() => {
   const result = useSignal<string>('default value');
   const values = useSignal<any>({});
@@ -11,86 +12,106 @@ export default component$(() => {
 
   const fields: Field[] = [
     {
-      type: 'radio', // required
-      name: 'nameRadioA', // required
+      type: 'file', // required
+      name: 'name-file', // require
       attributes: {
-        id: 'idRadioA', // required
-        classes: ['class-radio'], // optional
-        label: 'Radio A:',
+        id: 'id-field', // optional
+        classes: ['form-control'], // optional
+        label: 'Image', // optional
       },
-      // require
+      rules: ['file'], // optional
       extra: {
-        items: [
-          {
-            id: 'radio1',
-            value: 1,
-            title: 'radio 1',
-          },
-          {
-            id: 'radio2',
-            value: 2,
-            title: 'radio 2',
-          },
-        ],
-        aligne: 'inline', // optional
+        multiple: true, // optional
+        showPreview: true, // optional
+      },
+      file: {
+        // optional
+        // need to add this attribute object if you need a file rule
+        extensions: ['jpg', 'gif', 'png'],
+        maxSize: 5, // 5 MB
       },
     },
-    {
-      type: 'checkbox', // required
-      name: 'checkA', // required
-      attributes: {
-        id: 'checkA', // required
-        label: 'CheckboxA', // optional
-        classes: ['class-checkbox'], // optional
-      },
-      // required
-      extra: {
-        items: [
-          {
-            name: 'item1',
-            value: 'value1',
-            title: 'Value 1',
-          },
-          {
-            name: 'item2',
-            value: 'value2',
-            title: 'Value 2',
-          },
-        ],
-      },
-    },
-    {
-      type: 'input',
-      name: 'f1',
-      // value: "default-value",
-      attributes: {
-        type: 'email',
-        id: 'f1',
-      },
-      rules: ['required', 'email'],
-      messages: {
-        required: 'The field username is required',
-      },
-    },
-    {
-      type: 'select',
-      name: 'f2',
-      attributes: {
-        id: 'f2',
-      },
-      extra: {
-        options: [
-          {
-            value: 1,
-            title: 'option 1',
-          },
-          {
-            value: 2,
-            title: 'option 2',
-          },
-        ],
-      },
-    },
+    // {
+    //   type: 'radio', // required
+    //   name: 'nameRadioA', // required
+    //   attributes: {
+    //     id: 'idRadioA', // required
+    //     classes: ['class-radio'], // optional
+    //     label: 'Radio A:',
+    //   },
+    //   // require
+    //   extra: {
+    //     items: [
+    //       {
+    //         id: 'radio1',
+    //         value: 1,
+    //         title: 'radio 1',
+    //       },
+    //       {
+    //         id: 'radio2',
+    //         value: 2,
+    //         title: 'radio 2',
+    //       },
+    //     ],
+    //     aligne: 'inline', // optional
+    //   },
+    // },
+    // {
+    //   type: 'checkbox', // required
+    //   name: 'checkA', // required
+    //   attributes: {
+    //     id: 'checkA', // required
+    //     label: 'CheckboxA', // optional
+    //     classes: ['class-checkbox'], // optional
+    //   },
+    //   // required
+    //   extra: {
+    //     items: [
+    //       {
+    //         name: 'item1',
+    //         value: 'value1',
+    //         title: 'Value 1',
+    //       },
+    //       {
+    //         name: 'item2',
+    //         value: 'value2',
+    //         title: 'Value 2',
+    //       },
+    //     ],
+    //   },
+    // },
+    // {
+    //   type: 'input',
+    //   name: 'f1',
+    //   // value: "default-value",
+    //   attributes: {
+    //     type: 'email',
+    //     id: 'f1',
+    //   },
+    //   rules: ['required', 'email'],
+    //   messages: {
+    //     required: 'The field username is required',
+    //   },
+    // },
+    // {
+    //   type: 'select',
+    //   name: 'f2',
+    //   attributes: {
+    //     id: 'f2',
+    //   },
+    //   extra: {
+    //     options: [
+    //       {
+    //         value: 1,
+    //         title: 'option 1',
+    //       },
+    //       {
+    //         value: 2,
+    //         title: 'option 2',
+    //       },
+    //     ],
+    //   },
+    // },
   ];
 
   // const fields2: Field[] = JSON.parse(JSON.stringify(fields));

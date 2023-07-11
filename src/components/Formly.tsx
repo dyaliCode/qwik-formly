@@ -13,6 +13,7 @@ import Input from "./fields/Input";
 import Select from "./fields/Select";
 import CheckBox from "./fields/Checkbox";
 import Radio from "./fields/Radio";
+import File from "./fields/File";
 import { preprocess_and_validate_field } from "../utils/form";
 
 // List components of fields.
@@ -21,7 +22,11 @@ const components: Record<any, Component<PublicProps<FieldProps>>> = {
   select: Select,
   checkbox: CheckBox,
   radio: Radio,
+  file: File,
 };
+
+// Import other components.
+import Error from "./Error";
 
 export const Formly = component$<FormProps>((props) => {
   // Current form.
@@ -32,13 +37,19 @@ export const Formly = component$<FormProps>((props) => {
     valid: true,
   });
 
+  // Values fields.
   const values = useStore<any>({});
 
+  /**
+   * Update fields values.
+   * Validate fields.
+   * Validate form.
+   */
   const updateFields = $(async (field_name?: string, field_value?: any): Promise<void> => {
     console.log(field_name, field_value);
     const _fields = await Promise.all(
       current_form.fields.map(async (field: Field) => {
-        if (field_name != '' && field_value != null ) {
+        if (field_name != '' && field_value != null) {
           if (field.name === field_name) {
             field.value = field_value;
           }
@@ -49,6 +60,7 @@ export const Formly = component$<FormProps>((props) => {
           field,
           current_form.values
         );
+
         values[`${field.name}`] = field.value ?? null;
 
         return field;
@@ -56,29 +68,31 @@ export const Formly = component$<FormProps>((props) => {
     );
 
     // Find dirty in the current form.
-		const dirty = _fields.find((field: Field) => {
-			if (field.validation) {
-				return field.validation.dirty === true;
-			}
-		});
+    const dirty = _fields.find((field: Field) => {
+      if (field.validation) {
+        return field.validation.dirty === true;
+      }
+    });
 
     // Update fields, values and status form.
     current_form.fields = _fields;
     current_form.values = values;
     current_form.valid = dirty ? false : true
-
   });
 
   useVisibleTask$(async () => {
+    console.log(111);
     await updateFields();
   });
 
   const onChangeValues = $(async (data: any) => {
+    console.log(222);
     const field_name = Object.keys(data)[0];
     const field_value = data[field_name];
 
     await updateFields(field_name, field_value);
 
+    // Semd data form in real time.
     if (props.realtime && props.onUpdate) {
       props.onUpdate({
         values: current_form.values,
@@ -110,7 +124,7 @@ export const Formly = component$<FormProps>((props) => {
                 key={index}
                 onChange={onChangeValues}
               />
-              <Errors field={field} />
+              <Error field={field} />
               <hr />
             </>
           );
@@ -118,19 +132,7 @@ export const Formly = component$<FormProps>((props) => {
         <button type="submit">{props.btnSubmit?.text ?? 'Submit'}</button>
         <button type="reset">{props.btnReset?.text ?? 'Reset'}</button>
       </form>
-      {/* <pre>{JSON.stringify(current_form, null, 2)}</pre> */}
     </>
   );
 });
 
-const Errors = component$<{ field: Field }>(({ field }) => {
-  return field.validation?.errors?.map((error: any, k: number) => {
-    return (
-      <div key={k} class="invalid-feedback error">
-        {field.messages && field.messages[error.rule]
-          ? field.messages[error.rule]
-          : error.message}
-      </div>
-    );
-  });
-});

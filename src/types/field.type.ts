@@ -1,26 +1,24 @@
-import { type QRL } from "@builder.io/qwik";
+import { type QRL } from '@builder.io/qwik';
 
 type FieldType = keyof FieldMap;
 
 interface FieldMap {
   input: {
-    type: "text" | "password" | "email";
+    type: 'text' | 'password' | 'email';
   };
   date: {
-    type: "text";
+    type: 'text';
   };
   textarea: {
-    type: "text";
+    type: 'text';
   };
   select: null;
   range: {
-    type: "number";
+    type: 'number';
   };
   checkbox: null;
   radio: null;
-  file: {
-    type: "file";
-  };
+  file: null;
   autocomplete: null;
 }
 
@@ -55,7 +53,7 @@ type Attributes = {
     autocorrect?: string;
     rows?: number;
     cols?: number;
-  } & ("type" extends keyof FieldMap[K] ? { type: FieldMap[K]["type"] } : {});
+  } & ('type' extends keyof FieldMap[K] ? { type: FieldMap[K]['type'] } : {});
 };
 
 export interface Prefix {
@@ -65,14 +63,14 @@ export interface Prefix {
 
 const _number = 0;
 export type RulesList =
-  | "required"
+  | 'required'
   | `min:${typeof _number}`
   | `max:${typeof _number}`
-  | "email"
-  | "between"
-  | "file"
-  | "equal"
-  | "url"
+  | 'email'
+  | 'between'
+  | 'file'
+  | 'equal'
+  | 'url'
   | { name: string; fnc: QRL<() => Promise<boolean>> };
 
 export type FileRules = {
