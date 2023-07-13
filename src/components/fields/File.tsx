@@ -3,15 +3,15 @@ import {
   $,
   useVisibleTask$,
   useSignal,
-  QwikMouseEvent,
   noSerialize,
 } from '@builder.io/qwik';
 
 import type { FieldProps } from '../../types';
+import { Image } from '@unpic/qwik';
 
 export default component$<FieldProps>((props) => {
   const { field } = props;
-  const files = useSignal<any[]>([]);
+  const files = useSignal<any>([]);
   const multiple = useSignal<boolean>(field.extra?.multiple ?? false);
   const showPreview = useSignal<boolean>(field.extra?.showPreview ?? false);
   const inputFile = useSignal<any>(null);
@@ -26,27 +26,38 @@ export default component$<FieldProps>((props) => {
   });
 
   const onDeleteFile = $(
-    (_event: QwikMouseEvent<HTMLButtonElement, MouseEvent>, file: File) => {
+    (file: any) => {
       let newValue;
-      files.value = files.value.filter((i) => i.name != file.name);
+      files.value = files.value.filter((i: File) => i.name != file.name);
       if (files.value.length === 0) {
         inputFile.value = null;
         newValue = null;
       } else {
-        newValue = files;
+        newValue = files.value;
       }
 
-      console.log('newValue', newValue);
-      // props.onChange({ [props.field.name]: newValue });
+      props.onChange({ [props.field.name]: newValue });
     }
   );
 
   const onChange = $((_event: Event, element: HTMLInputElement) => {
-    files.value = [
-      ...files.value,
-      noSerialize(element.files ? element.files[0] : []), // ArrayLike<File>,
-    ];
-    // props.onChange({ [props.field.name]: noSerialize(files.value) });
+    files.value = [];
+
+    if (element.files) {
+      let arr: any[] = [];
+      Array.from(element.files).map((file: File) => {
+        const item = {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          url: URL.createObjectURL(file),
+        }
+        files.value = [...files.value, item];
+        arr = [...arr, noSerialize(file)];
+      })
+
+      props.onChange({ [props.field.name]: arr });
+    }
   });
 
   return (
@@ -65,7 +76,7 @@ export default component$<FieldProps>((props) => {
           <ul>{JSON.stringify(Object.entries(field.file), null, 2)}</ul>
           <ul>
             {Object.entries(field.file).map(([rule, ruleValue]: any) => (
-              <li>
+              <li key={rule}>
                 <strong>{rule}</strong>: {ruleValue}
               </li>
             ))}
@@ -75,13 +86,19 @@ export default component$<FieldProps>((props) => {
         ''
       )}
 
-      {showPreview.value && files.value.length > 0 ? (
+      {showPreview.value && files.value?.length > 0 ? (
         <div class='list-files'>
-          {files.value.map((file: File) => (
-            <div class='file'>
-              <div class='img'>
-                <img src={window.URL.createObjectURL(file)} alt={file.name} />
+          {files.value?.map((file: any, key: number) => (
+            <div class='file' key={key}>
+              <div class="img">
+                <Image
+                  src={file.url}
+                  layout="constrained"
+                  width={800}
+                  height={600}
+                />
               </div>
+
               <div class='infos'>
                 <ul>
                   <li>Name: {file.name}</li>
@@ -91,11 +108,7 @@ export default component$<FieldProps>((props) => {
                     <button
                       type='button'
                       class='btn'
-                      onClick$={(
-                        event: QwikMouseEvent<HTMLButtonElement, MouseEvent>
-                      ) => {
-                        onDeleteFile(event, file);
-                      }}
+                      onClick$={() => onDeleteFile(file)}
                     >
                       Remove
                     </button>

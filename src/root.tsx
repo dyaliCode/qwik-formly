@@ -12,6 +12,27 @@ export default component$(() => {
 
   const fields: Field[] = [
     {
+      type: "textarea", // required
+      name: "nameTextarea", // required
+      value: "", // optional
+      attributes: {
+        id: "idTextarea", // required
+        classes: ["class-field"], // optional
+        label: "Label field textarea", // optional
+        placeholder: "Placeholder field tel", // optional
+        disabled: false, // optional
+        readonly: false, // optional
+        rows: 14, // optional
+        cols: 80, // optional
+      },
+      // optional
+      prefix: {
+        tag: "div", // optional
+        classes: ["class-wrapper"], // optional
+      },
+      rules: ["min:10"],
+    },
+    {
       type: 'file', // required
       name: 'name-file', // require
       attributes: {

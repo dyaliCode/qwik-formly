@@ -14,6 +14,7 @@ import Select from "./fields/Select";
 import CheckBox from "./fields/Checkbox";
 import Radio from "./fields/Radio";
 import File from "./fields/File";
+import Textarea from "./fields/Textarea";
 import { preprocess_and_validate_field } from "../utils/form";
 
 // List components of fields.
@@ -23,6 +24,7 @@ const components: Record<any, Component<PublicProps<FieldProps>>> = {
   checkbox: CheckBox,
   radio: Radio,
   file: File,
+  textarea: Textarea,
 };
 
 // Import other components.
@@ -46,7 +48,6 @@ export const Formly = component$<FormProps>((props) => {
    * Validate form.
    */
   const updateFields = $(async (field_name?: string, field_value?: any): Promise<void> => {
-    console.log(field_name, field_value);
     const _fields = await Promise.all(
       current_form.fields.map(async (field: Field) => {
         if (field_name != '' && field_value != null) {
@@ -81,12 +82,10 @@ export const Formly = component$<FormProps>((props) => {
   });
 
   useVisibleTask$(async () => {
-    console.log(111);
     await updateFields();
   });
 
   const onChangeValues = $(async (data: any) => {
-    console.log(222);
     const field_name = Object.keys(data)[0];
     const field_value = data[field_name];
 
@@ -131,6 +130,8 @@ export const Formly = component$<FormProps>((props) => {
         })}
         <button type="submit">{props.btnSubmit?.text ?? 'Submit'}</button>
         <button type="reset">{props.btnReset?.text ?? 'Reset'}</button>
+        <hr />
+        <pre>{JSON.stringify(current_form, null, 2)}</pre>
       </form>
     </>
   );

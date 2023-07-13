@@ -16,6 +16,7 @@ export function bytesToSize(bytes: number) {
  * @param {file} file.
  */
 export function getFileExtension(file: File) {
+	// const filenameParts = file.name.split('.');
 	const filenameParts = file.name.split('.');
 	return filenameParts[filenameParts.length - 1].toLowerCase();
 }
@@ -39,5 +40,6 @@ export function extensions(file: File, allowedFileTypes: string[]) {
  */
 export function maxSize(file: File, maxFileSize: number) {
 	const maxSize = maxFileSize * 1024 * 1024;
-	return (file.size > maxSize);
+	return (file.size < maxSize);
+	// return (file.size > maxSize);
 }

@@ -9,9 +9,7 @@ interface FieldMap {
   date: {
     type: 'text';
   };
-  textarea: {
-    type: 'text';
-  };
+  textarea: null;
   select: null;
   range: {
     type: 'number';
@@ -64,7 +62,7 @@ export interface Prefix {
 const _number = 0;
 export type RulesList =
   | 'required'
-  | `min:${typeof _number}`
+  | `min:${number}`
   | `max:${typeof _number}`
   | 'email'
   | 'between'
