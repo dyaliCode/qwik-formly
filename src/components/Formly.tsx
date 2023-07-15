@@ -5,6 +5,7 @@ import {
   $,
   useStore,
   useVisibleTask$,
+  QRL,
 } from "@builder.io/qwik";
 import type { Field, FieldProps, FormProps, Form } from "../types";
 
@@ -15,6 +16,7 @@ import CheckBox from "./fields/Checkbox";
 import Radio from "./fields/Radio";
 import File from "./fields/File";
 import Textarea from "./fields/Textarea";
+import Autocomplete from "./fields/Autocomplete";
 import { preprocess_and_validate_field } from "../utils/form";
 
 // List components of fields.
@@ -25,10 +27,12 @@ const components: Record<any, Component<PublicProps<FieldProps>>> = {
   radio: Radio,
   file: File,
   textarea: Textarea,
+  autocomplete: Autocomplete,
 };
 
 // Import other components.
 import Error from "./Error";
+import { createComponentWithPrefix } from "../utils/helper";
 
 export const Formly = component$<FormProps>((props) => {
   // Current form.
@@ -56,13 +60,14 @@ export const Formly = component$<FormProps>((props) => {
           }
         }
 
+        values[`${field.name}`] = field.value ?? null;
+
         field = await preprocess_and_validate_field(
           current_form,
           field,
           current_form.values
         );
 
-        values[`${field.name}`] = field.value ?? null;
 
         return field;
       })
@@ -115,25 +120,51 @@ export const Formly = component$<FormProps>((props) => {
     <>
       <form preventdefault: submit={true} onSubmit$={onSubmitHandler}>
         {current_form.fields?.map((field: Field, index: number) => {
-          const FieldComponent = components[field.type];
+          const fc = <FieldWithoutTag key={index} field={field} onChangeHandler={onChangeValues} />
+
           return (
             <>
-              <FieldComponent
-                field={field}
-                key={index}
-                onChange={onChangeValues}
-              />
-              <Error field={field} />
-              <hr />
+              {field.prefix?.tag
+                ? createComponentWithPrefix(fc, field.prefix)
+                : fc
+              }
             </>
-          );
+          )
         })}
+        {/*
         <button type="submit">{props.btnSubmit?.text ?? 'Submit'}</button>
         <button type="reset">{props.btnReset?.text ?? 'Reset'}</button>
-        <hr />
-        <pre>{JSON.stringify(current_form, null, 2)}</pre>
+      */}
       </form>
+      <p>{current_form.valid ? 'ok' : 'no'}</p>
+      <pre>{JSON.stringify(current_form.values, null, 2)}</pre>
     </>
   );
 });
 
+interface FieldCompProps {
+  field: Field;
+  onChangeHandler: QRL<(data: unknown) => void>;
+}
+
+// Without TAG.
+const FieldWithoutTag = component$<FieldCompProps>((props) => {
+  const { field } = props;
+
+  const FieldComponent = components[field.type];
+
+  return (
+    <>
+      {field.attributes.label && (
+        <label for={field.attributes.id}>
+          {field.attributes.label}
+        </label>
+      )}
+      <FieldComponent
+        field={field}
+        onChange={props.onChangeHandler}
+      />
+      <Error field={field} />
+    </>
+  )
+})

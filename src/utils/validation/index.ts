@@ -34,7 +34,7 @@ const getMessageByRule = (rule: string) => {
  * Validate field by rule.
  * @param {configs field} field
  */
-export async function validate(field: Field): Promise<Field> {
+export async function validate(field: Field, values: unknown): Promise<Field> {
 	const { value, rules } = field;
 
 	let valid = true;
@@ -63,7 +63,7 @@ export async function validate(field: Field): Promise<Field> {
 					if (typeof validator === 'function') {
 						valid = await validator.call;
 					} else if (typeof validator === 'object') {
-						valid = await validator.fnc();
+						valid = await validator.fnc(values);
 					} else {
 						const args = validator.split(/:/g);
 						rule = args.shift();

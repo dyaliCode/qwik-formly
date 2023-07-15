@@ -29,7 +29,7 @@ export async function preprocess_and_validate_field(
 
   // 2.validation
   if (field.rules) {
-    field = await validate(field);
+    field = await validate(field, values);
   }
 
   return field;

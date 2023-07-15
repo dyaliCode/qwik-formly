@@ -2,11 +2,20 @@ import { $, component$, useSignal } from '@builder.io/qwik';
 import { Formly } from './components/Formly';
 import type { Field } from './types';
 
+import "./global.css";
+
 // export default () => {
 
 export default component$(() => {
   const result = useSignal<string>('default value');
   const values = useSignal<any>({});
+
+  const itemLength = $(async (values: any) => {
+    if (values['name-field-autocomplete']?.length > 2) {
+      return true
+    }
+    return false;
+  })
 
   const form_name = 'form1';
 
@@ -17,122 +26,63 @@ export default component$(() => {
       value: "", // optional
       attributes: {
         id: "idTextarea", // required
-        classes: ["class-field"], // optional
-        label: "Label field textarea", // optional
-        placeholder: "Placeholder field tel", // optional
-        disabled: false, // optional
-        readonly: false, // optional
-        rows: 14, // optional
-        cols: 80, // optional
+        classes: ["input input-bordered"], // optional
       },
-      // optional
       prefix: {
-        tag: "div", // optional
-        classes: ["class-wrapper"], // optional
-      },
-      rules: ["min:10"],
+        tag: 'div',
+        classes: ['class1']
+      }
     },
-    {
-      type: 'file', // required
-      name: 'name-file', // require
-      attributes: {
-        id: 'id-field', // optional
-        classes: ['form-control'], // optional
-        label: 'Image', // optional
-      },
-      rules: ['file'], // optional
-      extra: {
-        multiple: true, // optional
-        showPreview: true, // optional
-      },
-      file: {
-        // optional
-        // need to add this attribute object if you need a file rule
-        extensions: ['jpg', 'gif', 'png'],
-        maxSize: 5, // 5 MB
-      },
-    },
-    // {
-    //   type: 'radio', // required
-    //   name: 'nameRadioA', // required
-    //   attributes: {
-    //     id: 'idRadioA', // required
-    //     classes: ['class-radio'], // optional
-    //     label: 'Radio A:',
-    //   },
-    //   // require
-    //   extra: {
-    //     items: [
-    //       {
-    //         id: 'radio1',
-    //         value: 1,
-    //         title: 'radio 1',
-    //       },
-    //       {
-    //         id: 'radio2',
-    //         value: 2,
-    //         title: 'radio 2',
-    //       },
-    //     ],
-    //     aligne: 'inline', // optional
-    //   },
-    // },
-    // {
-    //   type: 'checkbox', // required
-    //   name: 'checkA', // required
-    //   attributes: {
-    //     id: 'checkA', // required
-    //     label: 'CheckboxA', // optional
-    //     classes: ['class-checkbox'], // optional
-    //   },
-    //   // required
-    //   extra: {
-    //     items: [
-    //       {
-    //         name: 'item1',
-    //         value: 'value1',
-    //         title: 'Value 1',
-    //       },
-    //       {
-    //         name: 'item2',
-    //         value: 'value2',
-    //         title: 'Value 2',
-    //       },
-    //     ],
-    //   },
-    // },
     // {
     //   type: 'input',
     //   name: 'f1',
     //   // value: "default-value",
     //   attributes: {
-    //     type: 'email',
     //     id: 'f1',
-    //   },
-    //   rules: ['required', 'email'],
-    //   messages: {
-    //     required: 'The field username is required',
+    //     type: 'email',
+    //     classes: ["input input-bordered"], // optional
     //   },
     // },
-    // {
-    //   type: 'select',
-    //   name: 'f2',
-    //   attributes: {
-    //     id: 'f2',
-    //   },
-    //   extra: {
-    //     options: [
-    //       {
-    //         value: 1,
-    //         title: 'option 1',
-    //       },
-    //       {
-    //         value: 2,
-    //         title: 'option 2',
-    //       },
-    //     ],
-    //   },
-    // },
+
+    {
+      type: "autocomplete", // required
+      name: "name-field-autocomplete", // required
+      attributes: {
+        id: "id-field-autocomplete", // required
+        placeholder: "Tap item to select", // optional
+        autocomplete: "off", // optional
+        classes: ['input input-bordered']
+      },
+      extra: {
+        filter_lenght: 3, // optional and by default = 0
+        loadItemes: [
+          // required
+          // list items with id and title attributes.
+          {
+            value: 1,
+            title: "item 1",
+          },
+          {
+            value: 2,
+            title: "item 2",
+          },
+          {
+            value: 3,
+            title: "item 3",
+          },
+          {
+            value: 4,
+            title: "item 4",
+          },
+        ],
+      },
+      rules: [
+        {
+          name: 'itemLength',
+          fnc: itemLength,
+        }
+      ]
+    },
   ];
 
   // const fields2: Field[] = JSON.parse(JSON.stringify(fields));
@@ -145,8 +95,9 @@ export default component$(() => {
   });
 
   const onUpdate = $((data: any) => {
-    console.log('data', data.value);
-    result.value = data.values.f1;
+    // console.log('data', data.values['name-field-autocomplete'][0].title);
+    // result.value = data.values.f1;
+    console.log('data', data)
   });
 
   return (
@@ -155,16 +106,44 @@ export default component$(() => {
         <meta charSet='utf-8' />
         <title>Formly</title>
       </head>
-      <body>
-        <h1>{result.value}</h1>
-        <Formly
-          form_name={form_name}
-          fields={fields}
-          onSubmit={onSubmit}
-          btnSubmit={{ text: 'Send' }}
-          realtime={true}
-          onUpdate={onUpdate}
-        />
+      <body data-theme="dark">
+        <div class="hero min-h-screen bg-base-200">
+          <div class="hero-content flex-col lg:flex-row-reverse">
+            <div class="text-center lg:text-left">
+              <h1 class="text-5xl font-bold">Qwik Formly</h1>
+            </div>
+            <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+              <div class="card-body">
+                <Formly
+                  form_name={form_name}
+                  fields={fields}
+                  onSubmit={onSubmit}
+                  btnSubmit={{ text: 'Send' }}
+                  realtime={true}
+                  onUpdate={onUpdate}
+                />
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">Email</span>
+                  </label>
+                  <input type="text" placeholder="email" class="input input-bordered" />
+                </div>
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">Password</span>
+                  </label>
+                  <input type="text" placeholder="password" class="input input-bordered" />
+                  <label class="label">
+                    <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+                  </label>
+                </div>
+                <div class="form-control mt-6">
+                  <button class="btn btn-primary">Login</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <pre>{JSON.stringify(values.value, null, 2)}</pre>
       </body>
     </>

@@ -56,20 +56,19 @@ type Attributes = {
 
 export interface Prefix {
   tag: string;
-  classes?: string[];
+  classes?: [string];
 }
 
-const _number = 0;
 export type RulesList =
   | 'required'
   | `min:${number}`
-  | `max:${typeof _number}`
+  | `max:${number}`
   | 'email'
   | 'between'
   | 'file'
   | 'equal'
   | 'url'
-  | { name: string; fnc: QRL<() => Promise<boolean>> };
+  | { name: string; fnc: QRL<(values: unknown) => Promise<boolean>> };
 
 export type FileRules = {
   maxSize?: number;
@@ -80,4 +79,9 @@ export type FileRules = {
 export interface FieldProps {
   field: Field;
   onChange: QRL<(args?: unknown) => unknown>;
+}
+
+export interface AutoCompleteItems {
+  title: string;
+  value: any;
 }

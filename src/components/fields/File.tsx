@@ -4,6 +4,7 @@ import {
   useVisibleTask$,
   useSignal,
   noSerialize,
+  NoSerialize,
 } from '@builder.io/qwik';
 
 import type { FieldProps } from '../../types';
@@ -11,7 +12,8 @@ import { Image } from '@unpic/qwik';
 
 export default component$<FieldProps>((props) => {
   const { field } = props;
-  const files = useSignal<any>([]);
+  // const files = useSignal<any>([]);
+  const files = useSignal<undefined | NoSerialize<File[]>>(undefined);
   const multiple = useSignal<boolean>(field.extra?.multiple ?? false);
   const showPreview = useSignal<boolean>(field.extra?.showPreview ?? false);
   const inputFile = useSignal<any>(null);
@@ -28,8 +30,8 @@ export default component$<FieldProps>((props) => {
   const onDeleteFile = $(
     (file: any) => {
       let newValue;
-      files.value = files.value.filter((i: File) => i.name != file.name);
-      if (files.value.length === 0) {
+      files.value?.filter((i: File) => i.name != file.name);
+      if (files.value?.length === 0) {
         inputFile.value = null;
         newValue = null;
       } else {
@@ -41,22 +43,24 @@ export default component$<FieldProps>((props) => {
   );
 
   const onChange = $((_event: Event, element: HTMLInputElement) => {
-    files.value = [];
+    // files.value = [];
+    files.value = noSerialize([]);
 
     if (element.files) {
-      let arr: any[] = [];
+      // let arr: any[] = [];
       Array.from(element.files).map((file: File) => {
-        const item = {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          url: URL.createObjectURL(file),
-        }
-        files.value = [...files.value, item];
-        arr = [...arr, noSerialize(file)];
+        // const item = {
+        //   name: file.name,
+        //   type: file.type,
+        //   size: file.size,
+        //   url: URL.createObjectURL(file),
+        // }
+        // files.value = [...files.value, item];
+        files.value?.push(file);
+        // arr = [...arr, noSerialize(file)];
       })
 
-      props.onChange({ [props.field.name]: arr });
+      props.onChange({ [props.field.name]: files.value });
     }
   });
 
