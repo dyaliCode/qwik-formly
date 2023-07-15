@@ -1,18 +1,18 @@
-import { type QRL } from '@builder.io/qwik';
+import { type QRL } from "@builder.io/qwik";
 
 type FieldType = keyof FieldMap;
 
 interface FieldMap {
   input: {
-    type: 'text' | 'password' | 'email';
+    type: "text" | "password" | "email";
   };
   date: {
-    type: 'text';
+    type: "text";
   };
   textarea: null;
   select: null;
   range: {
-    type: 'number';
+    type: "number";
   };
   checkbox: null;
   radio: null;
@@ -30,7 +30,9 @@ export type Field = {
     rules?: RulesList[];
     messages?: any;
     extra?: any;
-    preprocess?: QRL<(data: unknown) => Field>;
+    preprocess?: QRL<
+      (field: Field, fields: Field[], values: any) => Promise<Field>
+    >;
     validation?: any;
     file?: FileRules;
   };
@@ -51,7 +53,7 @@ type Attributes = {
     autocorrect?: string;
     rows?: number;
     cols?: number;
-  } & ('type' extends keyof FieldMap[K] ? { type: FieldMap[K]['type'] } : {});
+  } & ("type" extends keyof FieldMap[K] ? { type: FieldMap[K]["type"] } : {});
 };
 
 export interface Prefix {
@@ -60,14 +62,14 @@ export interface Prefix {
 }
 
 export type RulesList =
-  | 'required'
+  | "required"
   | `min:${number}`
   | `max:${number}`
-  | 'email'
-  | 'between'
-  | 'file'
-  | 'equal'
-  | 'url'
+  | "email"
+  | "between"
+  | "file"
+  | "equal"
+  | "url"
   | { name: string; fnc: QRL<(values: unknown) => Promise<boolean>> };
 
 export type FileRules = {

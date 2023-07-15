@@ -1,48 +1,73 @@
-import { $, component$, useSignal } from '@builder.io/qwik';
-import { Formly } from './components/Formly';
-import type { Field } from './types';
+import { $, component$, useSignal } from "@builder.io/qwik";
+import { Formly } from "./components/Formly";
+import type { Field } from "./types";
 
 import "./global.css";
 
 // export default () => {
 
 export default component$(() => {
-  const result = useSignal<string>('default value');
+  const result = useSignal<string>("default value");
   const values = useSignal<any>({});
 
   const itemLength = $(async (values: any) => {
-    if (values['name-field-autocomplete']?.length > 2) {
-      return true
+    if (values["name-field-autocomplete"]?.length > 2) {
+      return true;
     }
     return false;
-  })
+  });
 
-  const form_name = 'form1';
+  const fetchArticles = $(async () => {
+    return [
+      {
+        id: 1,
+        title: "Article 1",
+      },
+    ];
+  });
+
+  const fetchUsers = $(async () => {
+    return [
+      {
+        id: 1,
+        title: "User 1",
+      },
+    ];
+  });
+
+  const form_name = "form1";
 
   const fields: Field[] = [
     {
       type: "textarea", // required
-      name: "nameTextarea", // required
+      name: "message", // required
       value: "", // optional
       attributes: {
-        id: "idTextarea", // required
+        id: "message", // required
         classes: ["input input-bordered"], // optional
       },
       prefix: {
-        tag: 'div',
-        classes: ['class1']
-      }
+        tag: "div",
+        classes: ["class1"],
+      },
     },
-    // {
-    //   type: 'input',
-    //   name: 'f1',
-    //   // value: "default-value",
-    //   attributes: {
-    //     id: 'f1',
-    //     type: 'email',
-    //     classes: ["input input-bordered"], // optional
-    //   },
-    // },
+    {
+      type: "input",
+      name: "f1",
+      // value: "default-value",
+      attributes: {
+        id: "f1",
+        type: "email",
+        classes: ["input input-bordered"], // optional
+      },
+      preprocess: $(async (field: Field, fields: Field[], values: any) => {
+        console.log("preprocess", field, fields, values);
+        if (values["message"] == "message") {
+          field.value = "hello";
+        }
+        return field;
+      }),
+    },
 
     {
       type: "autocomplete", // required
@@ -51,7 +76,7 @@ export default component$(() => {
         id: "id-field-autocomplete", // required
         placeholder: "Tap item to select", // optional
         autocomplete: "off", // optional
-        classes: ['input input-bordered']
+        classes: ["input input-bordered"],
       },
       extra: {
         filter_lenght: 3, // optional and by default = 0
@@ -78,32 +103,35 @@ export default component$(() => {
       },
       rules: [
         {
-          name: 'itemLength',
+          name: "itemLength",
           fnc: itemLength,
-        }
-      ]
+        },
+      ],
+      messages: {
+        itemLength: "You should select 3 items or more!",
+      },
     },
   ];
 
   // const fields2: Field[] = JSON.parse(JSON.stringify(fields));
 
   const onSubmit = $((data: any) => {
-    console.log('data', data);
+    console.log("data", data);
     result.value = data.values.f1;
     values.value = data;
-    console.log('values', values);
+    console.log("values", values);
   });
 
   const onUpdate = $((data: any) => {
     // console.log('data', data.values['name-field-autocomplete'][0].title);
     // result.value = data.values.f1;
-    console.log('data', data)
+    // console.log("data", data);
   });
 
   return (
     <>
       <head>
-        <meta charSet='utf-8' />
+        <meta charSet="utf-8" />
         <title>Formly</title>
       </head>
       <body data-theme="dark">
@@ -118,7 +146,7 @@ export default component$(() => {
                   form_name={form_name}
                   fields={fields}
                   onSubmit={onSubmit}
-                  btnSubmit={{ text: 'Send' }}
+                  btnSubmit={{ text: "Send" }}
                   realtime={true}
                   onUpdate={onUpdate}
                 />
@@ -126,15 +154,25 @@ export default component$(() => {
                   <label class="label">
                     <span class="label-text">Email</span>
                   </label>
-                  <input type="text" placeholder="email" class="input input-bordered" />
+                  <input
+                    type="text"
+                    placeholder="email"
+                    class="input input-bordered"
+                  />
                 </div>
                 <div class="form-control">
                   <label class="label">
                     <span class="label-text">Password</span>
                   </label>
-                  <input type="text" placeholder="password" class="input input-bordered" />
+                  <input
+                    type="text"
+                    placeholder="password"
+                    class="input input-bordered"
+                  />
                   <label class="label">
-                    <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+                    <a href="#" class="label-text-alt link link-hover">
+                      Forgot password?
+                    </a>
                   </label>
                 </div>
                 <div class="form-control mt-6">

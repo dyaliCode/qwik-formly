@@ -7,12 +7,7 @@ export async function preprocessField(
   values: any
 ): Promise<Field> {
   const fnc = field.preprocess;
-  const args = {
-    field,
-    fields,
-    values,
-  };
-  const _field = fnc?.call(null, args) ?? field;
+  const _field = fnc?.call(null, field, fields, values) ?? field;
   return _field;
 }
 
