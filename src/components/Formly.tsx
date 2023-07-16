@@ -56,6 +56,7 @@ export const Formly = component$<FormProps>((props) => {
       current_form.fields.map(async (field: Field) => {
         if (field_name != '' && field_value != null) {
           if (field.name === field_name) {
+            values['touched'] = field.name;
             field.value = field_value;
           }
         }

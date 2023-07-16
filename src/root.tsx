@@ -7,108 +7,96 @@ import "./global.css";
 // export default () => {
 
 export default component$(() => {
-  const result = useSignal<string>("default value");
   const values = useSignal<any>({});
 
-  const itemLength = $(async (values: any) => {
-    if (values["name-field-autocomplete"]?.length > 2) {
-      return true;
-    }
-    return false;
+  // Fetch Users
+  const fetchUsers = $(async (): Promise<any> => {
+    const res = await fetch(
+      "https://jsonplaceholder.cypress.io/users?_limit=10"
+    );
+    const data = await res.json();
+    return data.map((item: any) => ({ value: item.id, title: item.name.length > 6 ? item.name.substring(0, 10) : item.name }));
   });
 
-  const fetchArticles = $(async () => {
-    return [
-      {
-        id: 1,
-        title: "Article 1",
-      },
-    ];
-  });
-
-  const fetchUsers = $(async () => {
-    return [
-      {
-        id: 1,
-        title: "User 1",
-      },
-    ];
+  // Fetch posts
+  const fetchPosts = $(async (): Promise<any> => {
+    const res = await fetch(
+      "https://jsonplaceholder.cypress.io/posts?_limit=10"
+    );
+    const data = await res.json();
+    return data.map((item: any) => ({ value: item.id, title: item.title.length > 6 ? item.title.substring(0, 10) : item.title }));
   });
 
   const form_name = "form1";
 
   const fields: Field[] = [
     {
-      type: "textarea", // required
-      name: "message", // required
+      type: "input", // required
+      name: "nameText", // required
       value: "", // optional
       attributes: {
-        id: "message", // required
+        type: "text", // default = text, or password, email, number, tel, optional
+        id: "idText", // required
         classes: ["input input-bordered"], // optional
+        placeholder: "Placeholder", // optional
+        autoComplete: false, // optional
+        autoCorrect: false, // optional
+        disabled: false, // optional
+        readonly: false, // optional
       },
+      // optional
       prefix: {
-        tag: "div",
-        classes: ["class1"],
+        tag: "div", // optional
+        classes: ["class-wrapper"], // optional
       },
     },
     {
-      type: "input",
-      name: "f1",
-      // value: "default-value",
+      type: "select",
+      name: "category",
       attributes: {
-        id: "f1",
-        type: "email",
-        classes: ["input input-bordered"], // optional
+        id: "category",
+        classes: ["select select-bordered w-full max-w-xs"], // optional
       },
-      preprocess: $(async (field: Field, fields: Field[], values: any) => {
-        console.log("preprocess", field, fields, values);
-        if (values["message"] == "message") {
-          field.value = "hello";
-        }
-        return field;
-      }),
-    },
-
-    {
-      type: "autocomplete", // required
-      name: "name-field-autocomplete", // required
-      attributes: {
-        id: "id-field-autocomplete", // required
-        placeholder: "Tap item to select", // optional
-        autocomplete: "off", // optional
-        classes: ["input input-bordered"],
-      },
+      rules: ["required"],
       extra: {
-        filter_lenght: 3, // optional and by default = 0
-        loadItemes: [
-          // required
-          // list items with id and title attributes.
+        options: [
+          {
+            value: null,
+            title: "None",
+          },
           {
             value: 1,
-            title: "item 1",
+            title: "Users",
           },
           {
             value: 2,
-            title: "item 2",
-          },
-          {
-            value: 3,
-            title: "item 3",
-          },
-          {
-            value: 4,
-            title: "item 4",
+            title: "Posts",
           },
         ],
       },
-      rules: [
-        {
-          name: "itemLength",
-          fnc: itemLength,
-        },
-      ],
-      messages: {
-        itemLength: "You should select 3 items or more!",
+      prefix: {
+        tag: "div",
+        classes: ["form-group"],
+      },
+    },
+    {
+      type: "select",
+      name: "items",
+      attributes: {
+        id: "items",
+        classes: ["select select-bordered w-full max-w-xs"],
+      },
+      extra: {},
+      preprocess: $(async (field: Field, _fields, _values) => {
+        if (_values.touched === "category") {
+          field.extra.options =
+            _values.category == 1 ? await fetchUsers() : await fetchPosts();
+        }
+        return field;
+      }),
+      prefix: {
+        tag: "div",
+        classes: ["form-group"],
       },
     },
   ];
@@ -116,8 +104,6 @@ export default component$(() => {
   // const fields2: Field[] = JSON.parse(JSON.stringify(fields));
 
   const onSubmit = $((data: any) => {
-    console.log("data", data);
-    result.value = data.values.f1;
     values.value = data;
     console.log("values", values);
   });
@@ -125,7 +111,7 @@ export default component$(() => {
   const onUpdate = $((data: any) => {
     // console.log('data', data.values['name-field-autocomplete'][0].title);
     // result.value = data.values.f1;
-    // console.log("data", data);
+    console.log("data", data);
   });
 
   return (

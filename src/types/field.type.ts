@@ -31,7 +31,7 @@ export type Field = {
     messages?: any;
     extra?: any;
     preprocess?: QRL<
-      (field: Field, fields: Field[], values: any) => Promise<Field>
+      (field: Field, _fields?: Field[], values?: any) => Promise<Field>
     >;
     validation?: any;
     file?: FileRules;
@@ -49,8 +49,8 @@ type Attributes = {
     min?: number;
     max?: number;
     step?: number;
-    autocomplete?: string;
-    autocorrect?: string;
+    autoComplete?: boolean;
+    autoCorrect?: boolean;
     rows?: number;
     cols?: number;
   } & ("type" extends keyof FieldMap[K] ? { type: FieldMap[K]["type"] } : {});
