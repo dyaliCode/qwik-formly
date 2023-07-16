@@ -15,7 +15,10 @@ export default component$(() => {
       "https://jsonplaceholder.cypress.io/users?_limit=10"
     );
     const data = await res.json();
-    return data.map((item: any) => ({ value: item.id, title: item.name.length > 6 ? item.name.substring(0, 10) : item.name }));
+    return data.map((item: any) => ({
+      value: item.id,
+      title: item.name.length > 6 ? item.name.substring(0, 10) : item.name,
+    }));
   });
 
   // Fetch posts
@@ -24,7 +27,10 @@ export default component$(() => {
       "https://jsonplaceholder.cypress.io/posts?_limit=10"
     );
     const data = await res.json();
-    return data.map((item: any) => ({ value: item.id, title: item.title.length > 6 ? item.title.substring(0, 10) : item.title }));
+    return data.map((item: any) => ({
+      value: item.id,
+      title: item.title.length > 6 ? item.title.substring(0, 10) : item.title,
+    }));
   });
 
   const form_name = "form1";
@@ -32,22 +38,18 @@ export default component$(() => {
   const fields: Field[] = [
     {
       type: "input", // required
+      name: "nameText2", // required
+      attributes: {
+        type: "text", // default = text, or password, email, number, tel, optional
+        id: "idTexts", // required
+      },
+    },
+    {
+      type: "input", // required
       name: "nameText", // required
-      value: "", // optional
       attributes: {
         type: "text", // default = text, or password, email, number, tel, optional
         id: "idText", // required
-        classes: ["input input-bordered"], // optional
-        placeholder: "Placeholder", // optional
-        autoComplete: false, // optional
-        autoCorrect: false, // optional
-        disabled: false, // optional
-        readonly: false, // optional
-      },
-      // optional
-      prefix: {
-        tag: "div", // optional
-        classes: ["class-wrapper"], // optional
       },
     },
     {
@@ -135,35 +137,11 @@ export default component$(() => {
                   btnSubmit={{ text: "Send" }}
                   realtime={true}
                   onUpdate={onUpdate}
+                  buttonsAction={{
+                    classes: ['class-btn-action'],
+                    tag: 'div'
+                  }}
                 />
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text">Email</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="email"
-                    class="input input-bordered"
-                  />
-                </div>
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text">Password</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="password"
-                    class="input input-bordered"
-                  />
-                  <label class="label">
-                    <a href="#" class="label-text-alt link link-hover">
-                      Forgot password?
-                    </a>
-                  </label>
-                </div>
-                <div class="form-control mt-6">
-                  <button class="btn btn-primary">Login</button>
-                </div>
               </div>
             </div>
           </div>

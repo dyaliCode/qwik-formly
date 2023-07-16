@@ -28,7 +28,7 @@ export default component$<FieldProps>((props) => {
       min={field.attributes.min}
       max={field.attributes.max}
       step={field.attributes.step}
-      autoComplete={field.attributes.autocomplete}
+      // autoComplete={field.attributes.autoComplete}
       onInput$={onChange}
     />
   );

@@ -58,7 +58,7 @@ type Attributes = {
 
 export interface Prefix {
   tag: string;
-  classes?: [string];
+  classes?: string[];
 }
 
 export type RulesList =

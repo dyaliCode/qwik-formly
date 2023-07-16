@@ -6,6 +6,7 @@ import {
   useStore,
   useVisibleTask$,
   QRL,
+  useSignal,
 } from "@builder.io/qwik";
 import type { Field, FieldProps, FormProps, Form } from "../types";
 
@@ -32,7 +33,8 @@ const components: Record<any, Component<PublicProps<FieldProps>>> = {
 
 // Import other components.
 import Error from "./Error";
-import { createComponentWithPrefix } from "../utils/helper";
+import { createComponentWithPrefix, isFieldDuplicated } from "../utils/helper";
+import Action from "./buttons/Action";
 
 export const Formly = component$<FormProps>((props) => {
   // Current form.
@@ -45,6 +47,7 @@ export const Formly = component$<FormProps>((props) => {
 
   // Values fields.
   const values = useStore<any>({});
+  const is_field_duplicated = useSignal<boolean>(false);
 
   /**
    * Update fields values.
@@ -88,7 +91,11 @@ export const Formly = component$<FormProps>((props) => {
   });
 
   useVisibleTask$(async () => {
-    await updateFields();
+    // Check if name/id fields are duplicated.
+    is_field_duplicated.value = isFieldDuplicated(current_form.fields);
+    if (!is_field_duplicated.value) {
+      await updateFields();
+    }
   });
 
   const onChangeValues = $(async (data: any) => {
@@ -119,26 +126,35 @@ export const Formly = component$<FormProps>((props) => {
 
   return (
     <>
-      <form preventdefault: submit={true} onSubmit$={onSubmitHandler}>
-        {current_form.fields?.map((field: Field, index: number) => {
-          const fc = <FieldWithoutTag key={index} field={field} onChangeHandler={onChangeValues} />
+      {is_field_duplicated.value ? (
+        <p>
+          <code>
+            <b>
+              A field with a conflicting ID or name attribute has been detected, indicating a duplication issue. Each field within the list fields must have a unique identifier or name for proper identification and functionality.
+            </b>
+          </code>
+        </p>
+      ) : (
+        <form preventdefault: submit={true} onSubmit$={onSubmitHandler}>
+          {current_form.fields?.map((field: Field, index: number) => {
+            const fc = <FieldWithoutTag key={index} field={field} onChangeHandler={onChangeValues} />
 
-          return (
-            <>
-              {field.prefix?.tag
-                ? createComponentWithPrefix(fc, field.prefix)
-                : fc
-              }
-            </>
-          )
-        })}
-        {/*
-        <button type="submit">{props.btnSubmit?.text ?? 'Submit'}</button>
-        <button type="reset">{props.btnReset?.text ?? 'Reset'}</button>
-      */}
-      </form>
-      <p>{current_form.valid ? 'ok' : 'no'}</p>
-      <pre>{JSON.stringify(current_form.values, null, 2)}</pre>
+            return (
+              <>
+                {field.prefix?.tag
+                  ? createComponentWithPrefix(fc, field.prefix)
+                  : fc
+                }
+              </>
+            )
+          })}
+          <Action
+            prefix={props.buttonsAction}
+            btnSubmit={props.btnSubmit}
+            btnReset={props.btnReset}
+          />
+        </form>
+      )}
     </>
   );
 });

@@ -1,5 +1,5 @@
 import { QRL } from '@builder.io/qwik'
-import type { Field } from './field.type'
+import type { Field, Prefix } from './field.type'
 
 export interface FormProps {
 	form_name: string
@@ -9,6 +9,7 @@ export interface FormProps {
 	onSubmit?: QRL<(data: unknown) => void>;
 	onUpdate?: QRL<(data: any) => void>;
 	realtime?: boolean
+	buttonsAction?: Prefix;
 }
 
 export interface Form extends FormProps {
@@ -25,6 +26,7 @@ export interface SubmitHandler {
 export interface Btn {
 	text?: string
 	classes?: string[]
+	prefix?: Prefix
 }
 
 export interface Value {
