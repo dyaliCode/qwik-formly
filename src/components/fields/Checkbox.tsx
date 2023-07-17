@@ -1,7 +1,6 @@
 import {
   component$,
   $,
-  useVisibleTask$,
   useSignal,
 } from "@builder.io/qwik";
 import type { FieldProps } from "../../types";
@@ -17,18 +16,6 @@ interface Item {
 export default component$<FieldProps>((props) => {
   const { field } = props;
   const values = useSignal<any[]>([]);
-
-  // Init.
-  // useVisibleTask$(() => {
-  //   if (field.extra.items.length > 0) {
-  //     field.extra.items.map((item: any) => {
-  //       if (item.checked) {
-  //         values.value = [...values.value, item.value];
-  //         field.value = field.value ? [...field.value, item.value] : values;
-  //       }
-  //     });
-  //   }
-  // })
 
   const onInput = $(
     async (

@@ -111,8 +111,6 @@ export default component$(() => {
   });
 
   const onUpdate = $((data: any) => {
-    // console.log('data', data.values['name-field-autocomplete'][0].title);
-    // result.value = data.values.f1;
     console.log("data", data);
   });
 

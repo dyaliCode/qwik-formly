@@ -2,7 +2,6 @@ import {
   component$,
   $,
   QwikChangeEvent,
-  useVisibleTask$,
 } from "@builder.io/qwik";
 import type { FieldProps } from "../../types";
 import { isRequired } from "../../utils/helper";
@@ -10,13 +9,6 @@ import { isRequired } from "../../utils/helper";
 export default component$<FieldProps>((props) => {
   const { field } = props;
   const is_multiple = field.extra?.multiple ?? false;
-
-  // useVisibleTask$(() => {
-  //   if (field.extra?.options?.length > 0) {
-  //     const value = field.extra.options[0].value;
-  //     props.onChange({ [props.field.name]: value });
-  //   }
-  // });
 
   const onChange = $(
     (
@@ -45,12 +37,12 @@ export default component$<FieldProps>((props) => {
   return (
     <select
       name={field.name}
-      id={field.attributes.id}
-      class={field.attributes.classes?.join(" ")}
+      id={field.attributes?.id}
+      class={field.attributes?.classes?.join(" ")}
       required={isRequired(field)}
-      disabled={field.attributes.disabled}
+      disabled={field.attributes?.disabled}
       multiple={
-        field.extra && field.extra.multiple ? field.extra.multiple : false
+        field.extra && field.extra?.multiple ? field.extra.multiple : false
       }
       onChange$={onChange}
     >

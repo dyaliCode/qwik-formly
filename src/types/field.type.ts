@@ -49,8 +49,8 @@ type Attributes = {
     min?: number;
     max?: number;
     step?: number;
-    autoComplete?: boolean;
-    autoCorrect?: boolean;
+    autoComplete?: string;
+    autoCorrect?: string;
     rows?: number;
     cols?: number;
   } & ("type" extends keyof FieldMap[K] ? { type: FieldMap[K]["type"] } : {});

@@ -1,8 +1,13 @@
-import { component$, $, useSignal, useVisibleTask$, useStylesScoped$ } from "@builder.io/qwik";
+import {
+  component$,
+  $,
+  useSignal,
+  useVisibleTask$,
+  useStylesScoped$,
+} from "@builder.io/qwik";
 import type { AutoCompleteItems, FieldProps } from "../../types";
 
 export default component$<FieldProps>((props) => {
-
   useStylesScoped$(`
     .autocomplete-wrapper {
       position: relative;
@@ -99,34 +104,33 @@ export default component$<FieldProps>((props) => {
     }
   });
 
-  const onFilter = $(
-    (
-      _event: Event,
-      element: HTMLInputElement
-    ) => {
-      const keyword = element.value;
+  const onFilter = $((_event: Event, element: HTMLInputElement) => {
+    const keyword = element.value;
 
-      if (keyword.length > filter_length.value) {
-        const filtered = items.value?.filter((item: any) => {
-          return item.title.toLowerCase().includes(keyword.toLowerCase());
-        });
-        if (filtered.length) {
-          itemsFiltered.value = filtered;
-        } else {
-          itemsFiltered.value = [];
-        }
-        itemsFiltered.value.length ? (showList.value = true) : (showList.value = false);
+    if (keyword.length > filter_length.value) {
+      const filtered = items.value?.filter((item: any) => {
+        return item.title.toLowerCase().includes(keyword.toLowerCase());
+      });
+      if (filtered.length) {
+        itemsFiltered.value = filtered;
       } else {
-        showList.value = false;
+        itemsFiltered.value = [];
       }
+      itemsFiltered.value.length
+        ? (showList.value = true)
+        : (showList.value = false);
+    } else {
+      showList.value = false;
     }
-  );
+  });
 
   const onSelectItem = $((item: any) => {
     // showList = false;
     value.value = null;
     items.value = items.value.filter((_item) => _item.value !== item.value);
-    itemsFiltered.value = itemsFiltered.value.filter((_item) => _item.value !== item.value);
+    itemsFiltered.value = itemsFiltered.value.filter(
+      (_item) => _item.value !== item.value
+    );
     selectedItems.value = [...selectedItems.value, item];
 
     if (!items.value.length) {
@@ -136,14 +140,15 @@ export default component$<FieldProps>((props) => {
     props.onChange({ [props.field.name]: selectedItems.value });
   });
 
-
   const onDeselectItem = $((item: any) => {
-    selectedItems.value = selectedItems.value.filter((_item) => _item.value !== item.value);
+    selectedItems.value = selectedItems.value.filter(
+      (_item) => _item.value !== item.value
+    );
     items.value = [...items.value, item];
     itemsFiltered.value = [...itemsFiltered.value, item];
 
     props.onChange({ [props.field.name]: selectedItems.value });
-  })
+  });
 
   const onClickOutside = $(() => {
     showList.value = false;
@@ -155,7 +160,9 @@ export default component$<FieldProps>((props) => {
         {selectedItems.value.map((item: AutoCompleteItems, index: number) => (
           <div key={index} class="item">
             <span>{item.title}</span>
-            <span class="deselect" onClick$={() => onDeselectItem(item)}>x</span>
+            <span class="deselect" onClick$={() => onDeselectItem(item)}>
+              x
+            </span>
           </div>
         ))}
       </div>
@@ -163,36 +170,38 @@ export default component$<FieldProps>((props) => {
       <input
         type="text"
         id={field.attributes.id}
-        class={field.attributes.classes?.join(' ')}
-        placeholder={field.attributes.placeholder}
-        autoComplete={field.attributes.autocomplete}
+        class={field.attributes?.classes?.join(" ")}
+        placeholder={field.attributes?.placeholder}
+        autoComplete={field.attributes?.autoComplete}
+        autoCorrect={field.attributes?.autoCorrect}
         onInput$={onFilter}
       />
 
-      { itemsFiltered.value.length && showList.value
-        ?
-        (
+      {itemsFiltered.value.length && showList.value ? (
         <div class="list-items" onClick$={() => onClickOutside}>
-
-            <ul>
-              {itemsFiltered.value.map((item: AutoCompleteItems, index: number) => (
-                <li key={index} onClick$={() => onSelectItem(item)}>{item.title}</li>
-              ))}
-                <li
-                class="done"
-                onClick$={() => {
-                  console.log(111)
-                  showList.value = false;
-                  value.value = null;
-                }}
-                >
-                Close
+          <ul>
+            {itemsFiltered.value.map(
+              (item: AutoCompleteItems, index: number) => (
+                <li key={index} onClick$={() => onSelectItem(item)}>
+                  {item.title}
                 </li>
-            </ul>
-          </div>
-        )
-        : ''}
+              )
+            )}
+            <li
+              class="done"
+              onClick$={() => {
+                console.log(111);
+                showList.value = false;
+                value.value = null;
+              }}
+            >
+              Close
+            </li>
+          </ul>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 });
-

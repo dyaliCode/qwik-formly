@@ -12,7 +12,6 @@ import { Image } from '@unpic/qwik';
 
 export default component$<FieldProps>((props) => {
   const { field } = props;
-  // const files = useSignal<any>([]);
   const files = useSignal<undefined | NoSerialize<File[]>>(undefined);
   const multiple = useSignal<boolean>(field.extra?.multiple ?? false);
   const showPreview = useSignal<boolean>(field.extra?.showPreview ?? false);
@@ -43,21 +42,10 @@ export default component$<FieldProps>((props) => {
   );
 
   const onChange = $((_event: Event, element: HTMLInputElement) => {
-    // files.value = [];
     files.value = noSerialize([]);
-
     if (element.files) {
-      // let arr: any[] = [];
       Array.from(element.files).map((file: File) => {
-        // const item = {
-        //   name: file.name,
-        //   type: file.type,
-        //   size: file.size,
-        //   url: URL.createObjectURL(file),
-        // }
-        // files.value = [...files.value, item];
         files.value?.push(file);
-        // arr = [...arr, noSerialize(file)];
       })
 
       props.onChange({ [props.field.name]: files.value });
@@ -90,7 +78,7 @@ export default component$<FieldProps>((props) => {
         ''
       )}
 
-      {showPreview.value && files.value?.length > 0 ? (
+      {showPreview.value ? (
         <div class='list-files'>
           {files.value?.map((file: any, key: number) => (
             <div class='file' key={key}>

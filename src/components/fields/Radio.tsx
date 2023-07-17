@@ -21,14 +21,13 @@ export default component$<FieldProps>((props) => {
       props.onChange({ [props.field.name]: value });
     });
 
-
   return (
     <>
       {field.extra?.items?.map((item: Item) => (
         <>
           <input
             type={field.type}
-            class={field.attributes.classes?.join(' ')}
+            class={field.attributes?.classes?.join(' ')}
             id={item.id}
             name={field.name}
             value={item.value}
