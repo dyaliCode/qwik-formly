@@ -1,14 +1,13 @@
 import {
   component$,
-  type Component,
-  PublicProps,
   $,
   useStore,
-  useVisibleTask$,
-  QRL,
   useSignal,
+  type Component,
+  type PublicProps,
+  useTask$,
 } from "@builder.io/qwik";
-import type { Field, FieldProps, FormProps, Form } from "../types";
+import type { Field, FormProps, Form, FieldProps } from "../types";
 
 // List fields type components.
 import Input from "./fields/Input";
@@ -90,18 +89,16 @@ export const Formly = component$<FormProps>((props) => {
     current_form.valid = dirty ? false : true
   });
 
-  useVisibleTask$(async () => {
+  useTask$(async () => {
     // Check if name/id fields are duplicated.
     is_field_duplicated.value = isFieldDuplicated(current_form.fields);
+
     if (!is_field_duplicated.value) {
       await updateFields();
     }
   });
 
-  const onChangeValues = $(async (data: any) => {
-    const field_name = Object.keys(data)[0];
-    const field_value = data[field_name];
-
+  const onChangeValues = $(async (field_name: any, field_value: any) => {
     await updateFields(field_name, field_value);
 
     // Semd data form in real time.
@@ -112,7 +109,6 @@ export const Formly = component$<FormProps>((props) => {
       });
     }
   });
-
 
   // Submit form handler.
   const onSubmitHandler = $(() => {
@@ -137,14 +133,17 @@ export const Formly = component$<FormProps>((props) => {
       ) : (
         <form preventdefault: submit={true} onSubmit$={onSubmitHandler}>
           {current_form.fields?.map((field: Field, index: number) => {
-            const fc = <FieldWithoutTag key={index} field={field} onChangeHandler={onChangeValues} />
-
+            const FieldComponent = components[field.type];
             return (
               <>
-                {field.prefix?.tag
-                  ? createComponentWithPrefix(fc, field.prefix)
-                  : fc
+                { field.prefix?.tag
+                  ? createComponentWithPrefix(FieldComponent, field.prefix)
+                  : <FieldComponent 
+                      key={index} 
+                      field={field} 
+                      onChange={onChangeValues} />
                 }
+                <Error field={field} />
               </>
             )
           })}
@@ -159,29 +158,3 @@ export const Formly = component$<FormProps>((props) => {
   );
 });
 
-interface FieldCompProps {
-  field: Field;
-  onChangeHandler: QRL<(data: unknown) => void>;
-}
-
-// Without TAG.
-const FieldWithoutTag = component$<FieldCompProps>((props) => {
-  const { field } = props;
-
-  const FieldComponent = components[field.type];
-
-  return (
-    <>
-      {field.attributes.label && (
-        <label for={field.attributes.id}>
-          {field.attributes.label}
-        </label>
-      )}
-      <FieldComponent
-        field={field}
-        onChange={props.onChangeHandler}
-      />
-      <Error field={field} />
-    </>
-  )
-})

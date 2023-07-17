@@ -3,6 +3,7 @@ import { Field } from "../types";
 
 export function isFieldDuplicated(fields: Field[]): boolean {
 	const seen: any = {};
+	console.log('fields', fields);
 	return fields.some(function (currentObject: any) {
 		if (
 			seen.hasOwnProperty(currentObject.name) ||
@@ -16,8 +17,6 @@ export function isFieldDuplicated(fields: Field[]): boolean {
 		return (seen[currentObject.name] = false), (seen[currentObject.attributes.id] = false);
 	});
 }
-
-
 
 export function isRequired(field: Field): boolean {
 	if (field.rules) {
@@ -43,7 +42,6 @@ export function createComponentWithPrefix(
 		children
 	);
 }
-
 
 export function clickOutside(node: any) {
 	const handleClick = (event: any) => {

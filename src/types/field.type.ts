@@ -1,4 +1,4 @@
-import { type QRL } from "@builder.io/qwik";
+import { PropFunction, type QRL } from "@builder.io/qwik";
 
 type FieldType = keyof FieldMap;
 
@@ -80,7 +80,7 @@ export type FileRules = {
 // Props types.
 export interface FieldProps {
   field: Field;
-  onChange: QRL<(args?: unknown) => unknown>;
+  onChange: PropFunction<(field_name: string, field_value?: unknown) => unknown>;
 }
 
 export interface AutoCompleteItems {
