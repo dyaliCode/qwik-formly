@@ -31,7 +31,7 @@ export type Field = {
     messages?: any;
     extra?: any;
     preprocess?: QRL<
-      (field: Field, _fields?: Field[], values?: any) => Promise<Field>
+      (field: Field, fields: Field[], values: any) => Promise<Field>
     >;
     validation?: any;
     file?: FileRules;

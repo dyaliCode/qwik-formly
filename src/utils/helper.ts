@@ -35,7 +35,7 @@ export function createComponentWithPrefix(
 ) {
   let attributes = {};
   if (props.classes?.length) {
-    attributes = { class: props.classes.join("") };
+    attributes = { class: props.classes.join(" ") };
   }
 
   return createElement(props.tag ?? "div", attributes, children);

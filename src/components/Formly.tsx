@@ -140,9 +140,6 @@ export const Formly = component$<FormProps>((props) => {
           {current_form.fields.map((field: Field) => {
             return (
               <>
-                <label for={field.attributes.id}>
-                  {field.attributes.label}
-                </label>
                 {FieldElement(field, onChangeValues)}
                 <Error field={field} />
               </>
@@ -160,15 +157,23 @@ export const Formly = component$<FormProps>((props) => {
 });
 
 const FieldElement = (field: Field, onChange: PropFunction) => {
-  let fc;
   const FieldComponent = components[field.type];
+
+  let fc = (
+    <>
+      <label for={field.attributes.id}>
+        {field.attributes.label}
+      </label>
+      <FieldComponent field={field} onChange={onChange} />
+    </>
+  );
+
   if (field.prefix) {
     fc = createComponentWithPrefix(
-      <FieldComponent field={field} onChange={onChange} />,
+      fc,
       field.prefix
     );
-  } else {
-    fc = <FieldComponent field={field} onChange={onChange} />;
   }
+
   return fc;
 };
