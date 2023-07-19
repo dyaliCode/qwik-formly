@@ -78,14 +78,23 @@ export default component$(() => {
     },
   ]
 
+  const onUpdate = $((data: any) => {
+    console.log('onUpdate', data);
+  })
+
   const onSubmit = $((data: any) => {
-    console.log('data', data);
+    console.log('onSubmit', data);
   })
 
   return (
     <>
       <h1>Formly</h1>
-      <Formly form_name={'form1'} fields={fields} onSubmit={onSubmit} />
+      <Formly 
+        form_name={'form1'} 
+        fields={fields} 
+        realtime={true}
+        onUpdate={onUpdate}
+        onSubmit={onSubmit} />
     </>
   );
 });
