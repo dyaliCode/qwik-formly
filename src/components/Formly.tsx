@@ -161,18 +161,13 @@ const FieldElement = (field: Field, onChange: PropFunction) => {
 
   let fc = (
     <>
-      <label for={field.attributes.id}>
-        {field.attributes.label}
-      </label>
+      <label for={field.attributes.id}>{field.attributes.label}</label>
       <FieldComponent field={field} onChange={onChange} />
     </>
   );
 
   if (field.prefix) {
-    fc = createComponentWithPrefix(
-      fc,
-      field.prefix
-    );
+    fc = createComponentWithPrefix(fc, field.prefix);
   }
 
   return fc;
