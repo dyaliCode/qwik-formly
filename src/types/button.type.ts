@@ -1,4 +1,4 @@
-import { Prefix } from "./field.type";
+import type { Prefix } from "./field.type";
 
 export interface ActionBtn {
   text?: string;

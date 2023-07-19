@@ -1,8 +1,4 @@
-import {
-  component$,
-  $,
-  useSignal,
-} from "@builder.io/qwik";
+import { component$, $, useSignal } from "@builder.io/qwik";
 import type { FieldProps } from "../../types";
 import { isRequired } from "../../utils/helper";
 
@@ -18,25 +14,24 @@ export default component$<FieldProps>((props) => {
   const values = useSignal<any[]>([]);
 
   const onInput = $(
-    async (
-      _event: any,
-      element: HTMLInputElement
-    ): Promise<void> => {
+    async (_event: any, element: HTMLInputElement): Promise<void> => {
       if (field.extra?.items?.length > 0) {
         field.extra.items.map((item: any) => {
           if (item.name === element.name) {
             if (element.checked) {
               values.value = [...values.value, item.value];
             } else {
-              values.value = values.value.filter((value) => value !== item.value);
+              values.value = values.value.filter(
+                (value) => value !== item.value
+              );
             }
           }
         });
 
-        props.onChange({ [props.field.name]: values.value });
+        props.onChange(field.name, values.value);
       }
-    });
-
+    }
+  );
 
   return (
     <>
@@ -44,10 +39,10 @@ export default component$<FieldProps>((props) => {
         <>
           <input
             type={field.type}
-            class={field.attributes.classes?.join(' ')}
+            class={field.attributes.classes?.join(" ")}
             value={item.value}
             name={item.name}
-            checked={item.checked ?? false}
+            checked={item.checked ? item.checked : false}
             required={isRequired(field)}
             disabled={field.attributes.disabled}
             onChange$={onInput}
@@ -58,4 +53,3 @@ export default component$<FieldProps>((props) => {
     </>
   );
 });
-

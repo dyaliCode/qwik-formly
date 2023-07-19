@@ -1,4 +1,4 @@
-import { Form, Field } from "../types";
+import type { Form, Field } from "../types";
 import { validate } from "./validation";
 
 export async function preprocessField(

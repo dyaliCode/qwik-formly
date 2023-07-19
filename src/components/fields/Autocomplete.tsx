@@ -108,7 +108,7 @@ export default component$<FieldProps>((props) => {
     const keyword = element.value;
 
     if (keyword.length > filter_length.value) {
-      const filtered = items.value?.filter((item: any) => {
+      const filtered = items.value.filter((item: any) => {
         return item.title.toLowerCase().includes(keyword.toLowerCase());
       });
       if (filtered.length) {
@@ -137,7 +137,8 @@ export default component$<FieldProps>((props) => {
       showList.value = false;
     }
 
-    props.onChange({ [props.field.name]: selectedItems.value });
+    // props.onChange({ [props.field.name]: selectedItems.value });
+    props.onChange(field.name, selectedItems.value);
   });
 
   const onDeselectItem = $((item: any) => {
@@ -146,8 +147,7 @@ export default component$<FieldProps>((props) => {
     );
     items.value = [...items.value, item];
     itemsFiltered.value = [...itemsFiltered.value, item];
-
-    props.onChange({ [props.field.name]: selectedItems.value });
+    props.onChange(field.name, selectedItems.value);
   });
 
   const onClickOutside = $(() => {
@@ -170,10 +170,10 @@ export default component$<FieldProps>((props) => {
       <input
         type="text"
         id={field.attributes.id}
-        class={field.attributes?.classes?.join(" ")}
-        placeholder={field.attributes?.placeholder}
-        autoComplete={field.attributes?.autoComplete}
-        autoCorrect={field.attributes?.autoCorrect}
+        class={field.attributes.classes?.join(" ")}
+        placeholder={field.attributes.placeholder}
+        autoComplete={field.attributes.autoComplete}
+        autoCorrect={field.attributes.autoCorrect}
         onInput$={onFilter}
       />
 
@@ -190,7 +190,6 @@ export default component$<FieldProps>((props) => {
             <li
               class="done"
               onClick$={() => {
-                console.log(111);
                 showList.value = false;
                 value.value = null;
               }}

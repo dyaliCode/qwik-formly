@@ -13,13 +13,11 @@ export default component$<FieldProps>((props) => {
   const { field } = props;
 
   const onInput = $(
-    async (
-      _event: any,
-      element: HTMLInputElement
-    ): Promise<void> => {
+    async (_event: any, element: HTMLInputElement): Promise<void> => {
       const value = element.value;
-      props.onChange({ [props.field.name]: value });
-    });
+      props.onChange(field.name, value);
+    }
+  );
 
   return (
     <>
@@ -27,7 +25,7 @@ export default component$<FieldProps>((props) => {
         <>
           <input
             type={field.type}
-            class={field.attributes?.classes?.join(' ')}
+            class={field.attributes.classes?.join(" ")}
             id={item.id}
             name={field.name}
             value={item.value}
@@ -40,5 +38,3 @@ export default component$<FieldProps>((props) => {
     </>
   );
 });
-
-

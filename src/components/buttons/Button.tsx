@@ -19,5 +19,3 @@ export default component$<ButtonProps>((props: ButtonProps) => {
     </>
   );
 });
-
-

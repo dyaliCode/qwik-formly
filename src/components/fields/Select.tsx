@@ -1,8 +1,4 @@
-import {
-  component$,
-  $,
-  QwikChangeEvent,
-} from "@builder.io/qwik";
+import { component$, $, type QwikChangeEvent } from "@builder.io/qwik";
 import type { FieldProps } from "../../types";
 import { isRequired } from "../../utils/helper";
 
@@ -16,7 +12,7 @@ export default component$<FieldProps>((props) => {
       element: HTMLSelectElement
     ) => {
       const value = element.value;
-      props.onChange({ [props.field.name]: value });
+      props.onChange(field.name, value);
     }
   );
 
@@ -37,10 +33,10 @@ export default component$<FieldProps>((props) => {
   return (
     <select
       name={field.name}
-      id={field.attributes?.id}
-      class={field.attributes?.classes?.join(" ")}
+      id={field.attributes.id}
+      class={field.attributes.classes?.join(" ")}
       required={isRequired(field)}
-      disabled={field.attributes?.disabled}
+      disabled={field.attributes.disabled}
       multiple={
         field.extra && field.extra?.multiple ? field.extra.multiple : false
       }
@@ -49,14 +45,14 @@ export default component$<FieldProps>((props) => {
       {field.extra
         ? field.extra?.options
           ? field.extra?.options.map((item: any, key: number) => (
-            <option
-              key={key}
-              value={item.value}
-              selected={checkSelected(item.value, field.value)}
-            >
-              {item.title}
-            </option>
-          ))
+              <option
+                key={key}
+                value={item.value}
+                selected={checkSelected(item.value, field.value)}
+              >
+                {item.title}
+              </option>
+            ))
           : ""
         : ""}
     </select>

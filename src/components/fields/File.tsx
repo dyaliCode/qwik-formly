@@ -4,11 +4,11 @@ import {
   useVisibleTask$,
   useSignal,
   noSerialize,
-  NoSerialize,
-} from '@builder.io/qwik';
+  type NoSerialize,
+} from "@builder.io/qwik";
 
-import type { FieldProps } from '../../types';
-import { Image } from '@unpic/qwik';
+import type { FieldProps } from "../../types";
+import { Image } from "@unpic/qwik";
 
 export default component$<FieldProps>((props) => {
   const { field } = props;
@@ -26,29 +26,25 @@ export default component$<FieldProps>((props) => {
     }
   });
 
-  const onDeleteFile = $(
-    (file: any) => {
-      let newValue;
-      files.value?.filter((i: File) => i.name != file.name);
-      if (files.value?.length === 0) {
-        inputFile.value = null;
-        newValue = null;
-      } else {
-        newValue = files.value;
-      }
-
-      props.onChange({ [props.field.name]: newValue });
+  const onDeleteFile = $((file: any) => {
+    let newValue;
+    files.value?.filter((i: File) => i.name != file.name);
+    if (files.value?.length === 0) {
+      inputFile.value = null;
+      newValue = null;
+    } else {
+      newValue = files.value;
     }
-  );
+    props.onChange(field.name, newValue);
+  });
 
   const onChange = $((_event: Event, element: HTMLInputElement) => {
     files.value = noSerialize([]);
     if (element.files) {
       Array.from(element.files).map((file: File) => {
         files.value?.push(file);
-      })
-
-      props.onChange({ [props.field.name]: files.value });
+      });
+      props.onChange(field.name, files.value);
     }
   });
 
@@ -58,14 +54,13 @@ export default component$<FieldProps>((props) => {
         type={field.type}
         name={field.name}
         id={field.attributes.id}
-        class={field.attributes.classes?.join(' ')}
+        class={field.attributes.classes?.join(" ")}
         multiple={multiple.value}
         onInput$={onChange}
       />
 
       {field.file ? (
-        <div class='file-rules'>
-          <ul>{JSON.stringify(Object.entries(field.file), null, 2)}</ul>
+        <div class="file-rules">
           <ul>
             {Object.entries(field.file).map(([rule, ruleValue]: any) => (
               <li key={rule}>
@@ -75,13 +70,13 @@ export default component$<FieldProps>((props) => {
           </ul>
         </div>
       ) : (
-        ''
+        ""
       )}
 
       {showPreview.value ? (
-        <div class='list-files'>
+        <div class="list-files">
           {files.value?.map((file: any, key: number) => (
-            <div class='file' key={key}>
+            <div class="file" key={key}>
               <div class="img">
                 <Image
                   src={file.url}
@@ -91,15 +86,15 @@ export default component$<FieldProps>((props) => {
                 />
               </div>
 
-              <div class='infos'>
+              <div class="infos">
                 <ul>
                   <li>Name: {file.name}</li>
                   <li>Size: {file.size}</li>
                   <li>Type: {file.type}</li>
                   <li>
                     <button
-                      type='button'
-                      class='btn'
+                      type="button"
+                      class="btn"
                       onClick$={() => onDeleteFile(file)}
                     >
                       Remove
@@ -111,7 +106,7 @@ export default component$<FieldProps>((props) => {
           ))}
         </div>
       ) : (
-        ''
+        ""
       )}
     </>
   );

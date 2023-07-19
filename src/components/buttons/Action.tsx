@@ -38,5 +38,3 @@ export default component$<Props>((props: Props) => {
     </>
   );
 });
-
-

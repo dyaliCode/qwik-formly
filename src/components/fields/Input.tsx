@@ -1,43 +1,32 @@
-import {
-  component$,
-  $,
-  useSignal,
-  PropFunction,
-} from "@builder.io/qwik";
+import { component$, $ } from "@builder.io/qwik";
 import { isRequired } from "../../utils/helper";
-import type { Field } from "../../types";
+import type { FieldProps } from "../../types";
 
-export interface FieldPropsInput {
-  field: Field;
-  onChange: PropFunction<(field_name: string, args?: unknown) => unknown>;
-}
-
-export default component$<FieldPropsInput>((props: FieldPropsInput) => {
-  const field = useSignal<Field>(props.field);
+export default component$<FieldProps>((props: FieldProps) => {
+  const { field } = props;
 
   const onChange = $((_event: Event, element: HTMLInputElement) => {
-    const field_name = element.name;
     const value = element.value;
-    props.onChange(field_name, value);
+    props.onChange(field.name, value);
   });
 
   return (
     <>
       <input
-        name={field.value.name}
-        value={field.value.value ?? null}
-        type={field.value.type}
-        id={field.value.attributes.id}
-        class={field.value.attributes?.classes?.join(" ")}
-        placeholder={field.value.attributes?.placeholder}
-        required={isRequired(field.value)}
-        disabled={field.value.attributes?.disabled}
-        readOnly={field.value.attributes?.readonly}
-        min={field.value.attributes?.min}
-        max={field.value.attributes?.max}
-        step={field.value.attributes?.step}
-        autoComplete={field.value.attributes?.autoComplete}
-        autoCorrect={field.value.attributes?.autoCorrect}
+        name={field.name}
+        value={field.value ?? null}
+        type={field.type}
+        id={field.attributes.id}
+        class={field.attributes.classes?.join(" ")}
+        placeholder={field.attributes.placeholder}
+        required={isRequired(field)}
+        disabled={field.attributes.disabled}
+        readOnly={field.attributes.readonly}
+        min={field.attributes.min}
+        max={field.attributes.max}
+        step={field.attributes.step}
+        autoComplete={field.attributes.autoComplete}
+        autoCorrect={field.attributes.autoCorrect}
         onInput$={onChange}
       />
     </>

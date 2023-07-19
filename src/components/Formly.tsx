@@ -6,13 +6,14 @@ import {
   type Component,
   type PublicProps,
   useTask$,
+  type PropFunction,
 } from "@builder.io/qwik";
 import type { Field, FormProps, Form, FieldProps } from "../types";
 
 // List fields type components.
 import Input from "./fields/Input";
-import Select from "./fields/Select";
 import CheckBox from "./fields/Checkbox";
+import Select from "./fields/Select";
 import Radio from "./fields/Radio";
 import File from "./fields/File";
 import Textarea from "./fields/Textarea";
@@ -22,8 +23,8 @@ import { preprocess_and_validate_field } from "../utils/form";
 // List components of fields.
 const components: Record<any, Component<PublicProps<FieldProps>>> = {
   input: Input,
-  select: Select,
   checkbox: CheckBox,
+  select: Select,
   radio: Radio,
   file: File,
   textarea: Textarea,
@@ -53,41 +54,42 @@ export const Formly = component$<FormProps>((props) => {
    * Validate fields.
    * Validate form.
    */
-  const updateFields = $(async (field_name?: string, field_value?: any): Promise<void> => {
-    const _fields = await Promise.all(
-      current_form.fields.map(async (field: Field) => {
-        if (field_name != '' && field_value != null) {
-          if (field.name === field_name) {
-            values['touched'] = field.name;
-            field.value = field_value;
+  const updateFields = $(
+    async (field_name?: string, field_value?: any): Promise<void> => {
+      const _fields = await Promise.all(
+        current_form.fields.map(async (field: Field) => {
+          if (field_name != "" && field_value != null) {
+            if (field.name === field_name) {
+              values["touched"] = field.name;
+              field.value = field_value;
+            }
           }
+
+          values[`${field.name}`] = field.value ?? null;
+
+          field = await preprocess_and_validate_field(
+            current_form,
+            field,
+            current_form.values
+          );
+
+          return field;
+        })
+      );
+
+      // Find dirty in the current form.
+      const dirty = _fields.find((field: Field) => {
+        if (field.validation) {
+          return field.validation.dirty === true;
         }
+      });
 
-        values[`${field.name}`] = field.value ?? null;
-
-        field = await preprocess_and_validate_field(
-          current_form,
-          field,
-          current_form.values
-        );
-
-
-        return field;
-      })
-    );
-
-    // Find dirty in the current form.
-    const dirty = _fields.find((field: Field) => {
-      if (field.validation) {
-        return field.validation.dirty === true;
-      }
-    });
-
-    // Update fields, values and status form.
-    current_form.fields = _fields;
-    current_form.values = values;
-    current_form.valid = dirty ? false : true
-  });
+      // Update fields, values and status form.
+      current_form.fields = _fields;
+      current_form.values = values;
+      current_form.valid = dirty ? false : true;
+    }
+  );
 
   useTask$(async () => {
     // Check if name/id fields are duplicated.
@@ -105,7 +107,7 @@ export const Formly = component$<FormProps>((props) => {
     if (props.realtime && props.onUpdate) {
       props.onUpdate({
         values: current_form.values,
-        valid: current_form.valid
+        valid: current_form.valid,
       });
     }
   });
@@ -115,10 +117,10 @@ export const Formly = component$<FormProps>((props) => {
     if (props.onSubmit) {
       props.onSubmit({
         values: current_form.values,
-        valid: current_form.valid
+        valid: current_form.valid,
       });
     }
-  })
+  });
 
   return (
     <>
@@ -126,26 +128,22 @@ export const Formly = component$<FormProps>((props) => {
         <p>
           <code>
             <b>
-              A field with a conflicting ID or name attribute has been detected, indicating a duplication issue. Each field within the list fields must have a unique identifier or name for proper identification and functionality.
+              A field with a conflicting ID or name attribute has been detected,
+              indicating a duplication issue. Each field within the list fields
+              must have a unique identifier or name for proper identification
+              and functionality.
             </b>
           </code>
         </p>
       ) : (
-        <form preventdefault: submit={true} onSubmit$={onSubmitHandler}>
-          {current_form.fields?.map((field: Field, index: number) => {
-            const FieldComponent = components[field.type];
+        <form preventdefault:submit={true} onSubmit$={onSubmitHandler}>
+          {current_form.fields.map((field: Field) => {
             return (
               <>
-                { field.prefix?.tag
-                  ? createComponentWithPrefix(FieldComponent, field.prefix)
-                  : <FieldComponent 
-                      key={index} 
-                      field={field} 
-                      onChange={onChangeValues} />
-                }
+                {FieldElement(field, onChangeValues)}
                 <Error field={field} />
               </>
-            )
+            );
           })}
           <Action
             prefix={props.buttonsAction}
@@ -158,3 +156,16 @@ export const Formly = component$<FormProps>((props) => {
   );
 });
 
+const FieldElement = (field: Field, onChange: PropFunction) => {
+  let fc;
+  const FieldComponent = components[field.type];
+  if (field.prefix) {
+    fc = createComponentWithPrefix(
+      <FieldComponent field={field} onChange={onChange} />,
+      field.prefix
+    );
+  } else {
+    fc = <FieldComponent field={field} onChange={onChange} />;
+  }
+  return fc;
+};
