@@ -140,6 +140,9 @@ export const Formly = component$<FormProps>((props) => {
           {current_form.fields.map((field: Field) => {
             return (
               <>
+                <label for={field.attributes.id}>
+                  {field.attributes.label}
+                </label>
                 {FieldElement(field, onChangeValues)}
                 <Error field={field} />
               </>
