@@ -41,7 +41,7 @@
     "release": "np",
     "start": "vite --open --mode ssr",
     "qwik": "qwik",
-    "test": "npm run fmt.check"
+    "test": "lint"
   },
   "devDependencies": {
     "@builder.io/qwik": "1.2.6",
