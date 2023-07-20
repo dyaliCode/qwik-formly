@@ -41,7 +41,9 @@
     "release": "np",
     "start": "vite --open --mode ssr",
     "qwik": "qwik",
-    "test": "vitest"
+    "test": "vitest run",
+    "test.run": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@builder.io/qwik": "1.2.6",
