@@ -13,5 +13,13 @@ export default defineConfig(() => {
       },
     },
     plugins: [qwikVite(), tsconfigPaths()],
+    test: {
+      globals: true,
+      // environment: 'jsdom',
+      // setupFiles: ['<PATH_TO_SETUP_FILE>'],
+      coverage: {
+        reporter: "text", // ["text", "json", "html"]
+      },
+    }
   };
 });
