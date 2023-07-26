@@ -53,7 +53,7 @@ type Attributes = {
     autoCorrect?: string;
     rows?: number;
     cols?: number;
-  } & ("type" extends keyof FieldMap[K] ? { type: FieldMap[K]["type"] } : {});
+  } & ("type" extends keyof FieldMap[K] ? { type: FieldMap[K]["type"] } : { type?: null });
 };
 
 export interface Prefix {

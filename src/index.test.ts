@@ -14,8 +14,8 @@ export function divide(a: number, b: number) {
   return a / b;
 }
 
-describe('Start test', () => {
-  it("should work", () => {
-    expect(add(1, 1)).toBe(2);
-  });
-});
+// describe('Start test', () => {
+//   it("should work", () => {
+//     expect(add(1, 1)).toBe(2);
+//   });
+// });

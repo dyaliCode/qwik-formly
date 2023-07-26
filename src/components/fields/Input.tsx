@@ -15,7 +15,7 @@ export default component$<FieldProps>((props: FieldProps) => {
       <input
         name={field.name}
         value={field.value ?? null}
-        type={field.type}
+        type={field.attributes.type ?? field.type}
         id={field.attributes.id}
         class={field.attributes.classes?.join(" ")}
         placeholder={field.attributes.placeholder}
