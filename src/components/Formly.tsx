@@ -80,6 +80,8 @@ export const Formly = component$<FormProps>((props) => {
       // Find dirty in the current form.
       const dirty = _fields.find((field: Field) => {
         if (field.validation) {
+          // if (field.validation.dirty === true)
+          // field.attributes.classes = ['invalid-feedback error']
           return field.validation.dirty === true;
         }
       });
@@ -137,14 +139,9 @@ export const Formly = component$<FormProps>((props) => {
         </p>
       ) : (
         <form preventdefault:submit={true} onSubmit$={onSubmitHandler}>
-          {current_form.fields.map((field: Field) => {
-            return (
-              <>
-                {FieldElement(field, onChangeValues)}
-                <Error field={field} />
-              </>
-            );
-          })}
+          {current_form.fields.map((field: Field) => (
+            FieldElement(field, onChangeValues)
+          ))}
           <Action
             prefix={props.buttonsAction}
             btnSubmit={props.btnSubmit}
@@ -163,6 +160,7 @@ const FieldElement = (field: Field, onChange: PropFunction) => {
     <>
       <label for={field.attributes.id}>{field.attributes.label}</label>
       <FieldComponent field={field} onChange={onChange} />
+      <Error field={field} />
     </>
   );
 

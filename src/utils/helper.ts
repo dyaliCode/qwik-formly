@@ -3,20 +3,19 @@ import type { Field } from "../types";
 
 export function isFieldDuplicated(fields: Field[]): boolean {
   const seen: any = {};
-  return fields.some(function (currentObject: any) {
+  return fields.some(function(currentObject: any) {
     if (
-      seen.hasOwnProperty(currentObject.name) ||
-      seen.hasOwnProperty(currentObject.attributes.id)
+      Object.prototype.hasOwnProperty.call(seen, currentObject.name) ||
+      Object.prototype.hasOwnProperty.call(seen, currentObject.attributes.id)
     ) {
       // Current name or id is already seen
       return true;
     }
 
-    // Current name and id is being seen for the first time
-    return (
-      (seen[currentObject.name] = false),
-      (seen[currentObject.attributes.id] = false)
-    );
+    // Current name and id are being seen for the first time
+    seen[currentObject.name] = false;
+    seen[currentObject.attributes.id] = false;
+    return false;
   });
 }
 
